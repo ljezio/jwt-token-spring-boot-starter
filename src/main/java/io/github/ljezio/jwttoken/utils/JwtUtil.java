@@ -22,9 +22,9 @@ public class JwtUtil {
                 .sign(Algorithm.HMAC256(JwtTokenProperties.secret));
     }
 
-    public static String create(String payloadClaimsJson, long expire) {
+    public static String create(String json, long expire) {
         return JWT.create()
-                .withPayload(payloadClaimsJson)
+                .withPayload(json)
                 .withExpiresAt(OffsetDateTime.now().plusMinutes(expire).toInstant())
                 .sign(Algorithm.HMAC256(JwtTokenProperties.secret));
     }

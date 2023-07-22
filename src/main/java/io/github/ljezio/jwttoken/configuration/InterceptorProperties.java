@@ -2,7 +2,6 @@ package io.github.ljezio.jwttoken.configuration;
 
 import io.github.ljezio.jwttoken.common.Constant;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.HttpHeaders;
 
 import java.util.List;
 
@@ -17,12 +16,12 @@ public class InterceptorProperties {
     /**
      * 安全请求头key
      */
-    public static String headerName = HttpHeaders.AUTHORIZATION;
+    public static String headerName = "Authorization";
 
     /**
      * 拦截器执行顺序
      */
-    public static int order = Integer.MIN_VALUE;
+    public static int order = -1000;
 
     /**
      * 需要检查token的url
