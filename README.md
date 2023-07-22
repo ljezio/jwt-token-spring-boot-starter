@@ -49,8 +49,8 @@ jwt-token:
 | jwt-token.interception.path                          | 需要检查token的url          | List    | /**                                                          |
 | jwt-token.interception.exclude-path                  | 不需要检查token的url        | List    |                                                              |
 | jwt-token.interception.check-fail-json.expired       | token过期返回json           | String  | {<br/>  "code": 452,<br/>  "msg": "token已过期",<br/>  "data": null<br/>} |
-| jwt-token.interception.check-fail-json.verifier-fail | token校验失败返回json       |         | {<br/>  "code": 453,<br/>  "msg": "token无效",<br/>  "data": null<br/>} |
+| jwt-token.interception.check-fail-json.verifier-fail | token校验失败返回json       | String  | {<br/>  "code": 453,<br/>  "msg": "token无效",<br/>  "data": null<br/>} |
 
 #### 拦截器
 
-`jwt-token.interception.enable`设为`true`时启用拦截器，token校验不通过时接口自动返回错误信息
+`jwt-token.interception.enable`设为`true`时启用拦截器，token校验不通过时拦截接口返回错误信息
