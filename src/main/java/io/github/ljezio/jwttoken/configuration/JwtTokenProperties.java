@@ -1,10 +1,16 @@
 package io.github.ljezio.jwttoken.configuration;
 
+import io.github.ljezio.jwttoken.common.AlgorithmEnum;
 import io.github.ljezio.jwttoken.common.Constant;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = Constant.COMMON_PROPERTIES_PREFIX)
 public class JwtTokenProperties {
+
+    /**
+     * 加密算法
+     */
+    public static AlgorithmEnum algorithm = AlgorithmEnum.HMAC256;
 
     /**
      * 密钥
@@ -26,9 +32,13 @@ public class JwtTokenProperties {
      */
     public static boolean showBanner = true;
 
-    /**
-     * token过期时间
-     */
+    public AlgorithmEnum getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(AlgorithmEnum algorithm) {
+        JwtTokenProperties.algorithm = algorithm;
+    }
 
     public String getSecret() {
         return secret;

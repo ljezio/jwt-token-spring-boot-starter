@@ -14,14 +14,19 @@ public class InterceptorProperties {
     public static boolean enable = false;
 
     /**
-     * 安全请求头key
-     */
-    public static String headerName = "Authorization";
-
-    /**
      * 拦截器执行顺序
      */
     public static int order = -1000;
+
+    /**
+     * 安全请求头key
+     */
+    public static String header = "Authorization";
+
+    /**
+     * 安全请求头value前缀
+     */
+    public static String headerValuePrefix = "Bearer ";
 
     /**
      * 需要检查token的url
@@ -54,12 +59,20 @@ public class InterceptorProperties {
         InterceptorProperties.order = order;
     }
 
-    public String getHeaderName() {
-        return headerName;
+    public String getHeader() {
+        return header;
     }
 
-    public void setHeaderName(String headerName) {
-        InterceptorProperties.headerName = headerName;
+    public void setHeader(String header) {
+        InterceptorProperties.header = header;
+    }
+
+    public String getHeaderValuePrefix() {
+        return headerValuePrefix;
+    }
+
+    public void setHeaderValuePrefix(String headerValuePrefix) {
+        InterceptorProperties.headerValuePrefix = headerValuePrefix;
     }
 
     public List<String> getPath() {
@@ -90,22 +103,12 @@ public class InterceptorProperties {
         /**
          * token过期返回json
          */
-        public static String expired = """
-                {
-                  "code": 452,
-                  "msg": "token已过期",
-                  "data": null
-                }""";
+        public static String expired = "{\"code\":452,\"msg\":\"token已过期\",\"data\":null}";
 
         /**
          * token校验失败返回json
          */
-        public static String verifierFail = """
-                {
-                  "code": 453,
-                  "msg": "token无效",
-                  "data": null
-                }""";
+        public static String verifierFail = "{\"code\":453,\"msg\":\"token无效\",\"data\":null}";
 
         public String getExpired() {
             return expired;

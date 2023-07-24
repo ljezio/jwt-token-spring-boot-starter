@@ -1,7 +1,6 @@
 package io.github.ljezio.jwttoken.utils;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
@@ -11,27 +10,28 @@ import io.github.ljezio.jwttoken.exception.TokenAlreadyExpiredException;
 import io.github.ljezio.jwttoken.exception.TokenVerifierFailException;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 public class JwtUtil {
 
-    public static <T> String create(T payload, long expire) {
+    public static <T> String create(T payload, long expire, ChronoUnit chronoUnit) {
         return JWT.create()
                 .withPayload(ObjectMapUtil.objectToMap(payload))
-                .withExpiresAt(OffsetDateTime.now().plusMinutes(expire).toInstant())
-                .sign(Algorithm.HMAC256(JwtTokenProperties.secret));
+                .withExpiresAt(OffsetDateTime.now().plus(expire, chronoUnit).toInstant())
+                .sign(JwtTokenProperties.algorithm.getJwtAlgorithm(JwtTokenProperties.secret));
     }
 
-    public static String create(String json, long expire) {
+    public static String create(String json, long expire, ChronoUnit chronoUnit) {
         return JWT.create()
                 .withPayload(json)
-                .withExpiresAt(OffsetDateTime.now().plusMinutes(expire).toInstant())
-                .sign(Algorithm.HMAC256(JwtTokenProperties.secret));
+                .withExpiresAt(OffsetDateTime.now().plus(expire, chronoUnit).toInstant())
+                .sign(JwtTokenProperties.algorithm.getJwtAlgorithm(JwtTokenProperties.secret));
     }
 
     public static DecodedJWT verify(String token) throws TokenAlreadyExpiredException, TokenVerifierFailException {
         try {
-            return JWT.require(Algorithm.HMAC256(JwtTokenProperties.secret)).build().verify(token);
+            return JWT.require(JwtTokenProperties.algorithm.getJwtAlgorithm(JwtTokenProperties.secret)).build().verify(token);
         } catch (TokenExpiredException e) {
             throw new TokenAlreadyExpiredException(e);
         } catch (JWTVerificationException | IllegalArgumentException e) {

@@ -9,7 +9,7 @@
 <dependency>
     <groupId>io.github.ljezio</groupId>
     <artifactId>jwt-token-spring-boot-starter</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -17,12 +17,12 @@
 
 ```java
 // 生成一个token
-Token create(T payload)
+Token create(T payload);
 // 从token中取出负载
-T decode(String token, Class<T> clazz) throws TokenVerifierFailException, TokenAlreadyExpiredException
+T decode(String token, Class<T> clazz) throws TokenVerifierFailException, TokenAlreadyExpiredException;
 // 刷新token
-Token refresh(Token oldToken) throws TokenVerifierFailException, TokenAlreadyExpiredException
-Token refresh(String refreshToken) throws TokenVerifierFailException, TokenAlreadyExpiredException
+Token refresh(Token oldToken) throws TokenVerifierFailException, TokenAlreadyExpiredException;
+Token refresh(String refreshToken) throws TokenVerifierFailException, TokenAlreadyExpiredException;
 ```
 
 #### 配置
@@ -39,19 +39,21 @@ jwt-token:
       - /login
 ```
 
-| 配置                                                 | 说明                        | 类型    | 默认值                                                       |
-| ---------------------------------------------------- | --------------------------- | ------- | ------------------------------------------------------------ |
-| jwt-token.secret                                     | 密钥                        | String  | 1234ezio                                                     |
-| jwt-token.access-token-expire-minutes                | accessToken过期时间（分钟） | int     | 30                                                           |
-| jwt-token.refresh-token-expire-days                  | refreshToken过期时间（天）  | int     | 180                                                          |
-| jwt-token.show-banner                                | 是否显示banner图            | boolean | true                                                         |
-| jwt-token.interception.enable                        | 是否启用拦截器              | boolean | false                                                        |
-| jwt-token.interception.header-name                   | 安全请求头key               | String  | Authorization                                                |
-| jwt-token.interception.order                         | 拦截器执行顺序              | int     | -1000                                                        |
-| jwt-token.interception.path                          | 需要检查token的url          | List    | /**                                                          |
-| jwt-token.interception.exclude-path                  | 不需要检查token的url        | List    |                                                              |
-| jwt-token.interception.check-fail-json.expired       | token过期返回json           | String  | {<br/>  "code": 452,<br/>  "msg": "token已过期",<br/>  "data": null<br/>} |
-| jwt-token.interception.check-fail-json.verifier-fail | token校验失败返回json       | String  | {<br/>  "code": 453,<br/>  "msg": "token无效",<br/>  "data": null<br/>} |
+| 配置                                                 | 说明                        | 类型           | 默认值                                                       |
+| ---------------------------------------------------- | --------------------------- | -------------- | ------------------------------------------------------------ |
+| jwt-token.algorithm                                  | 加密算法                    | Enum           | HMAC256                                                      |
+| jwt-token.secret                                     | 密钥                        | String         | 1234ezio                                                     |
+| jwt-token.access-token-expire-minutes                | accessToken过期时间（分钟） | int            | 30                                                           |
+| jwt-token.refresh-token-expire-days                  | refreshToken过期时间（天）  | int            | 180                                                          |
+| jwt-token.show-banner                                | 是否显示banner图            | boolean        | true                                                         |
+| jwt-token.interception.enable                        | 是否启用拦截器              | boolean        | false                                                        |
+| jwt-token.interception.header                        | 安全请求头key               | String         | Authorization                                                |
+| jwt-token.interception.header-value-prefix           | 安全请求头value前缀         | String         | "Bearer "                                                    |
+| jwt-token.interception.order                         | 拦截器执行顺序              | int            | -1000                                                        |
+| jwt-token.interception.path                          | 需要检查token的url          | List\<String\> | /**                                                          |
+| jwt-token.interception.exclude-path                  | 不需要检查token的url        | List\<String\> |                                                              |
+| jwt-token.interception.check-fail-json.expired       | token过期返回json           | String         | {<br/>  "code": 452,<br/>  "msg": "token已过期",<br/>  "data": null<br/>} |
+| jwt-token.interception.check-fail-json.verifier-fail | token校验失败返回json       | String         | {<br/>  "code": 453,<br/>  "msg": "token无效",<br/>  "data": null<br/>} |
 
 #### 拦截器
 

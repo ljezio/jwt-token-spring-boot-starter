@@ -6,13 +6,14 @@ import io.github.ljezio.jwttoken.exception.TokenVerifierFailException;
 import io.github.ljezio.jwttoken.utils.JwtUtil;
 
 import java.nio.charset.StandardCharsets;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 
 public class JwtToken {
 
     public static <T> Token create(T payload) {
-        String accessToken = JwtUtil.create(payload, JwtTokenProperties.accessTokenExpireMinutes);
-        String refreshToken = JwtUtil.create(payload, JwtTokenProperties.refreshTokenExpireDays);
+        String accessToken = JwtUtil.create(payload, JwtTokenProperties.accessTokenExpireMinutes, ChronoUnit.MINUTES);
+        String refreshToken = JwtUtil.create(payload, JwtTokenProperties.refreshTokenExpireDays, ChronoUnit.DAYS);
         return new Token(accessToken, refreshToken);
     }
 
@@ -27,7 +28,7 @@ public class JwtToken {
     public static Token refresh(String refreshToken) throws TokenVerifierFailException, TokenAlreadyExpiredException {
         String payload = JwtUtil.verify(refreshToken).getPayload();
         String jsonStr = new String(Base64.getDecoder().decode(payload.getBytes(StandardCharsets.UTF_8)));
-        String accessToken = JwtUtil.create(jsonStr, JwtTokenProperties.accessTokenExpireMinutes);
+        String accessToken = JwtUtil.create(jsonStr, JwtTokenProperties.accessTokenExpireMinutes, ChronoUnit.MINUTES);
         return new Token(accessToken, refreshToken);
     }
 

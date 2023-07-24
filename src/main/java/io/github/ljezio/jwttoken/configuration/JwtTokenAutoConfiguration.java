@@ -1,9 +1,7 @@
 package io.github.ljezio.jwttoken.configuration;
 
 import io.github.ljezio.jwttoken.common.Constant;
-import io.github.ljezio.jwttoken.filter.TokenCheckInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.github.ljezio.jwttoken.interceptor.TokenCheckInterceptor;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,13 +15,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableConfigurationProperties({JwtTokenProperties.class, InterceptorProperties.class})
 public class JwtTokenAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtTokenAutoConfiguration.class);
-
     @Bean("jwtTokenRunner")
-    public ApplicationRunner runner(JwtTokenProperties properties) {
+    public ApplicationRunner runner(JwtTokenProperties jwtTokenProperties, InterceptorProperties interceptorProperties) {
         return args -> {
-            if (properties.isShowBanner()) {
-                System.out.println(Constant.BANNER);
+            if (jwtTokenProperties.isShowBanner()) {
+                System.out.printf(Constant.BANNER, interceptorProperties.isEnable() ? " and interceptor" : "");
             }
         };
     }
@@ -31,7 +27,6 @@ public class JwtTokenAutoConfiguration {
     @Bean("jwtTokenInterceptorWebMvcConfigurer")
     @ConditionalOnProperty(prefix = Constant.INTERCEPTION_PROPERTIES_PREFIX, name = "enable", havingValue = "true")
     public WebMvcConfigurer webConfigurer(InterceptorProperties properties) {
-        logger.info("jwt token interception is working");
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
