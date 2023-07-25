@@ -1,19 +1,20 @@
 package io.github.ljezio.jwttoken;
 
+import io.github.ljezio.jwttoken.common.BeanContent;
 import io.github.ljezio.jwttoken.configuration.JwtTokenProperties;
 import io.github.ljezio.jwttoken.exception.TokenAlreadyExpiredException;
 import io.github.ljezio.jwttoken.exception.TokenVerifierFailException;
 import io.github.ljezio.jwttoken.utils.JwtUtil;
 
-import java.nio.charset.StandardCharsets;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
 
 public class JwtToken {
 
+    private static final JwtTokenProperties jwtTokenProp = BeanContent.jwtTokenProp;
+
     public static <T> Token create(T payload) {
-        String accessToken = JwtUtil.create(payload, JwtTokenProperties.accessTokenExpireMinutes, ChronoUnit.MINUTES);
-        String refreshToken = JwtUtil.create(payload, JwtTokenProperties.refreshTokenExpireDays, ChronoUnit.DAYS);
+        String accessToken = JwtUtil.create(payload, jwtTokenProp.getAccessTokenExpireMinutes(), ChronoUnit.MINUTES);
+        String refreshToken = JwtUtil.create(payload, jwtTokenProp.getRefreshTokenExpireDays(), ChronoUnit.DAYS);
         return new Token(accessToken, refreshToken);
     }
 
@@ -26,9 +27,8 @@ public class JwtToken {
     }
 
     public static Token refresh(String refreshToken) throws TokenVerifierFailException, TokenAlreadyExpiredException {
-        String payload = JwtUtil.verify(refreshToken).getPayload();
-        String jsonStr = new String(Base64.getDecoder().decode(payload.getBytes(StandardCharsets.UTF_8)));
-        String accessToken = JwtUtil.create(jsonStr, JwtTokenProperties.accessTokenExpireMinutes, ChronoUnit.MINUTES);
+        String json = JwtUtil.decode(refreshToken);
+        String accessToken = JwtUtil.create(json, jwtTokenProp.getAccessTokenExpireMinutes(), ChronoUnit.MINUTES);
         return new Token(accessToken, refreshToken);
     }
 

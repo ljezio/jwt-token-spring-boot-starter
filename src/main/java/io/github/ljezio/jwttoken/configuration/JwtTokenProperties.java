@@ -2,74 +2,37 @@ package io.github.ljezio.jwttoken.configuration;
 
 import io.github.ljezio.jwttoken.common.AlgorithmEnum;
 import io.github.ljezio.jwttoken.common.Constant;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+@Getter
+@Setter
 @ConfigurationProperties(prefix = Constant.COMMON_PROPERTIES_PREFIX)
 public class JwtTokenProperties {
 
     /**
      * 加密算法
      */
-    public static AlgorithmEnum algorithm = AlgorithmEnum.HMAC256;
+    private AlgorithmEnum algorithm = AlgorithmEnum.HMAC256;
 
     /**
      * 密钥
      */
-    public static String secret = "1234ezio";
+    private String secret = "1234ezio";
 
     /**
      * accessToken过期时间
      */
-    public static int accessTokenExpireMinutes = 30;
+    private int accessTokenExpireMinutes = 30;
 
     /**
      * refreshToken过期时间
      */
-    public static int refreshTokenExpireDays = 180;
+    private int refreshTokenExpireDays = 180;
 
     /**
      * 是否显示banner图
      */
-    public static boolean showBanner = true;
-
-    public AlgorithmEnum getAlgorithm() {
-        return algorithm;
-    }
-
-    public void setAlgorithm(AlgorithmEnum algorithm) {
-        JwtTokenProperties.algorithm = algorithm;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        JwtTokenProperties.secret = secret;
-    }
-
-    public int getAccessTokenExpireMinutes() {
-        return accessTokenExpireMinutes;
-    }
-
-    public void setAccessTokenExpireMinutes(int accessTokenExpireMinutes) {
-        JwtTokenProperties.accessTokenExpireMinutes = accessTokenExpireMinutes;
-    }
-
-    public int getRefreshTokenExpireDays() {
-        return refreshTokenExpireDays;
-    }
-
-    public void setRefreshTokenExpireDays(int refreshTokenExpireDays) {
-        JwtTokenProperties.refreshTokenExpireDays = refreshTokenExpireDays;
-    }
-
-    public boolean isShowBanner() {
-        return showBanner;
-    }
-
-    public void setShowBanner(boolean showBanner) {
-        JwtTokenProperties.showBanner = showBanner;
-    }
-
+    private boolean showBanner = true;
 }
