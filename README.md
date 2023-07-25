@@ -17,12 +17,12 @@
 
 ```java
 // 生成一个token
-Token create(T payload);
+Token create(T payload)
 // 从token中取出负载
-T decode(String token, Class<T> clazz) throws TokenVerifierFailException, TokenAlreadyExpiredException;
+T decode(String token, Class<T> clazz) throws TokenVerifierFailException, TokenAlreadyExpiredException
 // 刷新token
-Token refresh(Token oldToken) throws TokenVerifierFailException, TokenAlreadyExpiredException;
-Token refresh(String refreshToken) throws TokenVerifierFailException, TokenAlreadyExpiredException;
+Token refresh(Token oldToken) throws TokenVerifierFailException, TokenAlreadyExpiredException
+Token refresh(String refreshToken) throws TokenVerifierFailException, TokenAlreadyExpiredException
 ```
 
 #### 配置
