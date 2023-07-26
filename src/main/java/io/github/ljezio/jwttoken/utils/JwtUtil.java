@@ -4,18 +4,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.github.ljezio.jwttoken.common.BeanContent;
 import io.github.ljezio.jwttoken.configuration.JwtTokenProperties;
 import io.github.ljezio.jwttoken.exception.TokenAlreadyExpiredException;
 import io.github.ljezio.jwttoken.exception.TokenVerifierFailException;
-import lombok.SneakyThrows;
 
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
@@ -25,15 +17,9 @@ import java.util.Base64;
 public class JwtUtil {
 
     private static final JwtTokenProperties jwtTokenProp = BeanContent.jwtTokenProp;
-    private static final ObjectMapper objectMapper = JsonMapper.builder()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-            .build()
-            .registerModule(new SimpleModule());
 
-    @SneakyThrows
     public static <T> String create(T payload, long expire, ChronoUnit chronoUnit) {
-        return create(objectMapper.writeValueAsString(payload), expire, chronoUnit);
+        return create(JsonUtil.toJson(payload), expire, chronoUnit);
     }
 
     public static String create(String json, long expire, ChronoUnit chronoUnit) {
@@ -43,9 +29,8 @@ public class JwtUtil {
                 .sign(jwtTokenProp.getAlgorithm().getJwtAlgorithm(jwtTokenProp.getSecret()));
     }
 
-    @SneakyThrows({JsonMappingException.class, JsonProcessingException.class})
     public static <T> T decode(String token, Class<T> clazz) throws TokenAlreadyExpiredException, TokenVerifierFailException {
-        return objectMapper.readValue(decode(token), clazz);
+        return JsonUtil.toBean(decode(token), clazz);
     }
 
     public static String decode(String token) throws TokenAlreadyExpiredException, TokenVerifierFailException {

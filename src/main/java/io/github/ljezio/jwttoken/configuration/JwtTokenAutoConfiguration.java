@@ -35,8 +35,10 @@ public class JwtTokenAutoConfiguration {
             public void addInterceptors(InterceptorRegistry registry) {
                 InterceptorRegistration registration = registry
                         .addInterceptor(new TokenCheckInterceptor())
-                        .order(properties.getOrder())
-                        .addPathPatterns(properties.getPath());
+                        .order(properties.getOrder());
+                if (properties.getPath() != null && !properties.getPath().isEmpty()) {
+                    registration.addPathPatterns(properties.getPath());
+                }
                 if (properties.getExcludePath() != null && !properties.getExcludePath().isEmpty()) {
                     registration.excludePathPatterns(properties.getExcludePath());
                 }

@@ -1,5 +1,6 @@
 package io.github.ljezio.jwttoken.interceptor;
 
+import io.github.ljezio.jwttoken.PayloadHolder;
 import io.github.ljezio.jwttoken.common.BeanContent;
 import io.github.ljezio.jwttoken.configuration.InterceptorProperties;
 import io.github.ljezio.jwttoken.exception.TokenAlreadyExpiredException;
@@ -25,7 +26,8 @@ public class TokenCheckInterceptor implements HandlerInterceptor {
             return false;
         }
         try {
-            JwtUtil.verify(token);
+            String payloadJson = JwtUtil.decode(token);
+            PayloadHolder.set(payloadJson);
         } catch (TokenAlreadyExpiredException e) {
             returnJson(response, interceptorProp.getCheckFailJson().getExpired());
             return false;
@@ -34,6 +36,11 @@ public class TokenCheckInterceptor implements HandlerInterceptor {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        PayloadHolder.remove();
     }
 
     private String extractToken(HttpServletRequest request) {
