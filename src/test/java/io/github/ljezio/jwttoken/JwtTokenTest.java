@@ -2,8 +2,8 @@ package io.github.ljezio.jwttoken;
 
 import io.github.ljezio.jwttoken.common.BeanContent;
 import io.github.ljezio.jwttoken.configuration.JwtTokenAutoConfiguration;
-import io.github.ljezio.jwttoken.exception.TokenAlreadyExpiredException;
-import io.github.ljezio.jwttoken.exception.TokenVerifierFailException;
+import io.github.ljezio.jwttoken.exception.TokenExpiredException;
+import io.github.ljezio.jwttoken.exception.TokenVerifyFailedException;
 import io.github.ljezio.jwttoken.interceptor.TokenCheckInterceptor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
@@ -41,14 +41,14 @@ class JwtTokenTest {
 
     @Test
     @Order(10)
-    public void decode() throws TokenVerifierFailException, TokenAlreadyExpiredException {
+    public void decode() throws TokenVerifyFailedException, TokenExpiredException {
         Payload decodePayload = JwtToken.decode(token.accessToken(), Payload.class);
         Assertions.assertEquals(payload, decodePayload);
     }
 
     @Test
     @Order(10)
-    public void refresh() throws TokenVerifierFailException, TokenAlreadyExpiredException, InterruptedException {
+    public void refresh() throws TokenVerifyFailedException, TokenExpiredException, InterruptedException {
         TimeUnit.SECONDS.sleep(1);
         Token refreshedToken = JwtToken.refresh(token);
         System.out.println("refreshedAccessToken:\n" + refreshedToken.accessToken());
@@ -61,7 +61,7 @@ class JwtTokenTest {
         String headerValue = BeanContent.interceptorProp.getHeaderValuePrefix() + token.accessToken();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(BeanContent.interceptorProp.getHeader(), headerValue);
-        TokenCheckInterceptor interceptor = new TokenCheckInterceptor();
+        TokenCheckInterceptor interceptor = new TokenCheckInterceptor(BeanContent.interceptorProp);
         boolean result = interceptor.preHandle(request, new MockHttpServletResponse(), null);
         Assertions.assertTrue(result);
     }
@@ -72,7 +72,7 @@ class JwtTokenTest {
         String headerValue = BeanContent.interceptorProp.getHeaderValuePrefix() + token.accessToken();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(BeanContent.interceptorProp.getHeader(), headerValue);
-        TokenCheckInterceptor interceptor = new TokenCheckInterceptor();
+        TokenCheckInterceptor interceptor = new TokenCheckInterceptor(BeanContent.interceptorProp);
         interceptor.preHandle(request, new MockHttpServletResponse(), null);
         Assertions.assertEquals(payload, PayloadHolder.get(Payload.class));
         interceptor.afterCompletion(null, null, null, null);

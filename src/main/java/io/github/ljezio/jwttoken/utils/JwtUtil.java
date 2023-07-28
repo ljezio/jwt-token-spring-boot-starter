@@ -1,13 +1,13 @@
 package io.github.ljezio.jwttoken.utils;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.github.ljezio.jwttoken.common.BeanContent;
 import io.github.ljezio.jwttoken.configuration.JwtTokenProperties;
-import io.github.ljezio.jwttoken.exception.TokenAlreadyExpiredException;
-import io.github.ljezio.jwttoken.exception.TokenVerifierFailException;
+import io.github.ljezio.jwttoken.exception.TokenExpiredException;
+import io.github.ljezio.jwttoken.exception.TokenVerifyFailedException;
 
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
@@ -23,28 +23,32 @@ public class JwtUtil {
     }
 
     public static String create(String json, long expire, ChronoUnit chronoUnit) {
-        return JWT.create()
-                .withPayload(json)
-                .withExpiresAt(OffsetDateTime.now().plus(expire, chronoUnit).toInstant())
-                .sign(jwtTokenProp.getAlgorithm().getJwtAlgorithm(jwtTokenProp.getSecret()));
+        try {
+            return JWT.create()
+                    .withPayload(json)
+                    .withExpiresAt(OffsetDateTime.now().plus(expire, chronoUnit).toInstant())
+                    .sign(jwtTokenProp.getAlgorithm().instance(jwtTokenProp.getSecret()));
+        } catch (JWTCreationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static <T> T decode(String token, Class<T> clazz) throws TokenAlreadyExpiredException, TokenVerifierFailException {
+    public static <T> T decode(String token, Class<T> clazz) throws TokenExpiredException, TokenVerifyFailedException {
         return JsonUtil.toBean(decode(token), clazz);
     }
 
-    public static String decode(String token) throws TokenAlreadyExpiredException, TokenVerifierFailException {
+    public static String decode(String token) throws TokenExpiredException, TokenVerifyFailedException {
         String payload = JwtUtil.verify(token).getPayload();
         return new String(Base64.getDecoder().decode(payload.getBytes(StandardCharsets.UTF_8)));
     }
 
-    public static DecodedJWT verify(String token) throws TokenAlreadyExpiredException, TokenVerifierFailException {
+    public static DecodedJWT verify(String token) throws TokenExpiredException, TokenVerifyFailedException {
         try {
-            return JWT.require(jwtTokenProp.getAlgorithm().getJwtAlgorithm(jwtTokenProp.getSecret())).build().verify(token);
-        } catch (TokenExpiredException e) {
-            throw new TokenAlreadyExpiredException(e);
-        } catch (JWTVerificationException | IllegalArgumentException e) {
-            throw new TokenVerifierFailException(e);
+            return JWT.require(jwtTokenProp.getAlgorithm().instance(jwtTokenProp.getSecret())).build().verify(token);
+        } catch (com.auth0.jwt.exceptions.TokenExpiredException e) {
+            throw new TokenExpiredException(e);
+        } catch (JWTVerificationException e) {
+            throw new TokenVerifyFailedException(e);
         }
     }
 }

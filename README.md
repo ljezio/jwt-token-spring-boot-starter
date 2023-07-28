@@ -16,13 +16,15 @@
 #### 使用
 
 ```java
-// 生成一个token
-Token create(T payload)
-// 从token中取出负载
-T decode(String token, Class<T> clazz) throws TokenVerifierFailException, TokenAlreadyExpiredException
-// 刷新token
-Token refresh(Token oldToken) throws TokenVerifierFailException, TokenAlreadyExpiredException
-Token refresh(String refreshToken) throws TokenVerifierFailException, TokenAlreadyExpiredException
+class JwtToken {
+    // 生成一个token
+    static Token create(T payload);
+    // 从token中取出负载
+    static T decode(String token, Class<T> clazz) throws TokenVerifierFailException, TokenAlreadyExpiredException;
+    // 刷新token
+    static Token refresh(Token oldToken) throws TokenVerifierFailException, TokenAlreadyExpiredException;
+    static Token refresh(String refreshToken) throws TokenVerifierFailException, TokenAlreadyExpiredException;
+}
 ```
 
 #### 配置
@@ -58,3 +60,4 @@ jwt-token:
 #### 拦截器
 
 `jwt-token.interception.enable`设为`true`时启用拦截器，token校验不通过时拦截接口返回错误信息
+`PayloadHolder.get(Class<T> clazz)`从上下文中获取token中的负载对象

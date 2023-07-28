@@ -1,10 +1,9 @@
 package io.github.ljezio.jwttoken.interceptor;
 
 import io.github.ljezio.jwttoken.PayloadHolder;
-import io.github.ljezio.jwttoken.common.BeanContent;
 import io.github.ljezio.jwttoken.configuration.InterceptorProperties;
-import io.github.ljezio.jwttoken.exception.TokenAlreadyExpiredException;
-import io.github.ljezio.jwttoken.exception.TokenVerifierFailException;
+import io.github.ljezio.jwttoken.exception.TokenExpiredException;
+import io.github.ljezio.jwttoken.exception.TokenVerifyFailedException;
 import io.github.ljezio.jwttoken.utils.JwtUtil;
 import io.github.ljezio.jwttoken.utils.StringUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +15,11 @@ import java.io.PrintWriter;
 
 public class TokenCheckInterceptor implements HandlerInterceptor {
 
-    private static final InterceptorProperties interceptorProp = BeanContent.interceptorProp;
+    public TokenCheckInterceptor(InterceptorProperties interceptorProp) {
+        this.interceptorProp = interceptorProp;
+    }
+
+    private final InterceptorProperties interceptorProp;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -28,10 +31,10 @@ public class TokenCheckInterceptor implements HandlerInterceptor {
         try {
             String payloadJson = JwtUtil.decode(token);
             PayloadHolder.set(payloadJson);
-        } catch (TokenAlreadyExpiredException e) {
+        } catch (TokenExpiredException e) {
             returnJson(response, interceptorProp.getCheckFailJson().getExpired());
             return false;
-        } catch (TokenVerifierFailException e) {
+        } catch (TokenVerifyFailedException e) {
             returnJson(response, interceptorProp.getCheckFailJson().getVerifierFail());
             return false;
         }
