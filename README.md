@@ -9,7 +9,7 @@
 <dependency>
     <groupId>io.github.ljezio</groupId>
     <artifactId>jwt-token-spring-boot-starter</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
@@ -20,10 +20,10 @@ class JwtToken {
     // 生成一个token
     static Token create(T payload);
     // 从token中取出负载
-    static T decode(String token, Class<T> clazz) throws TokenVerifierFailException, TokenAlreadyExpiredException;
+    static T decode(String token, Class<T> clazz) throws TokenVerifyFailedException, TokenExpiredException;
     // 刷新token
-    static Token refresh(Token oldToken) throws TokenVerifierFailException, TokenAlreadyExpiredException;
-    static Token refresh(String refreshToken) throws TokenVerifierFailException, TokenAlreadyExpiredException;
+    static Token refresh(Token oldToken) throws TokenVerifyFailedException, TokenExpiredException;
+    static Token refresh(String refreshToken) throws TokenVerifyFailedException, TokenExpiredException;
 }
 ```
 
