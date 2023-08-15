@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import lombok.SneakyThrows;
 
 public class JsonUtil {
@@ -13,7 +14,8 @@ public class JsonUtil {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .build()
-            .registerModule(new SimpleModule());
+            .registerModule(new SimpleModule())
+            .registerModule(new KotlinModule.Builder().build());
 
     @SneakyThrows
     public static <T> String toJson(T payload) {
